@@ -97,18 +97,24 @@ loadAllPokemon();
 const searchButton = document.getElementById("searchButton");
 
 searchButton.addEventListener('click', () => {
+    updateSearchResults();
+});
+
+function updateSearchResults() {
     const searchInput = document.getElementById("searchInput");
     const searchQuery = searchInput.value;
 
-    console.log(searchQuery);
-
     let searchResults = allPokemon.filter( pokemon => {
-        if ( pokemon.name === searchQuery )
-            return true;
+        return pokemon.name.includes(searchQuery);
     });
-    
+
     clearPokemon();
-
     renderPokemon( searchResults );
+}
 
+document.addEventListener('keypress', e => {
+
+    if(e.key == "Enter") {
+        updateSearchResults();
+    }
 });
