@@ -24,9 +24,15 @@ const colors = {
 const main_types = Object.keys(colors);
 // ["fire", "grass", "electric"]
 
+let allPokemon = [];
+
 const fetchPokemon = async () => {
     for(let i = 1; i <= pokemon_count; i++) {
-        await getPokemon(i);
+        let p = await getPokemon(i);
+        if(p.name === "mr-mime") {
+            p.name = "Mr. Mime";
+        }
+        allPokemon.push( p );
     }
 };
 
@@ -37,7 +43,12 @@ const getPokemon = async function(id) {
     const response = await fetch(url);
     const data = await response.json();
     
-    createPokemonCard( data );
+    return data;
+    //createPokemonCard( data );
+};
+
+const renderPokemon = async function( pokemonArray ) {
+    pokemonArray.forEach( pokemon => createPokemonCard(pokemon));
 };
 
 const createPokemonCard = (pokemon) => {
@@ -72,4 +83,32 @@ const createPokemonCard = (pokemon) => {
     poke_container.appendChild(pokemonEl);
 };
 
-fetchPokemon();
+async function loadAllPokemon() {
+    await fetchPokemon();
+    renderPokemon(allPokemon);
+}
+
+function clearPokemon() {
+    poke_container.innerHTML = "";
+}
+
+loadAllPokemon();
+
+const searchButton = document.getElementById("searchButton");
+
+searchButton.addEventListener('click', () => {
+    const searchInput = document.getElementById("searchInput");
+    const searchQuery = searchInput.value;
+
+    console.log(searchQuery);
+
+    let searchResults = allPokemon.filter( pokemon => {
+        if ( pokemon.name === searchQuery )
+            return true;
+    });
+    
+    clearPokemon();
+
+    renderPokemon( searchResults );
+
+});
